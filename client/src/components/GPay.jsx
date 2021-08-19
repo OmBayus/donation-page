@@ -5,7 +5,7 @@ const GPay = ()=>{
     return(
         <div className="d-flex justify-content-center">
             <GooglePayButton
-                environment='PRODUCTION'
+                environment='TEST'
                 paymentRequest={{
                     apiVersion: 2,
                     apiVersionMinor: 0,
