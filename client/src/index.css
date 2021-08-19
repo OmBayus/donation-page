@@ -47,6 +47,29 @@ code {
   box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.288);
 }
 
+.back{
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-weight: 600;
+  font-size: 2rem;
+  height: 50px;
+  width: 50px;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.288);
+  border-radius: 5px;
+  box-shadow: -.5px -.5px 5px rgba(255, 255, 255, 0.288);
+}
+
+.back:hover{
+  box-shadow: 0px 0px 0px rgba(255, 255, 255, 0.288);
+}
+
 @media only screen and (max-width: 600px) {
   .selectPayment{
     height: 120px;
