@@ -6,6 +6,7 @@ import Main from "./components/Main";
 import SelectPayment from "./components/SelectPayment";
 import GPay from "./components/GPay";
 import MetaMask from "./components/MetaMask";
+import CreditCard from "./components/CreditCard";
 
 const App = ()=>{
     return(
@@ -22,6 +23,11 @@ const App = ()=>{
                 <Route path="/metamask">
                     <MetaMask/>
                 </Route>
+
+                <Route path="/creditcard">
+                    <CreditCard/>
+                </Route>
+
             </Switch>
         </Main>
     )
