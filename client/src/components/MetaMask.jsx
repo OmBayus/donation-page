@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import Web3 from "web3"
 import {useHistory} from "react-router-dom"
+import {Button} from "react-bootstrap"
 
 const setupNetwork = async () => {
     const provider = window.ethereum
@@ -54,18 +55,17 @@ const MetaMask = ()=>{
         else if(window.web3){
             instance = new Web3(window.web3)
         }
-        else{
-            const provider = new Web3.provider.HttpProvider("http://127.0.0.1:7545")
-            instance = new Web3(provider)
-        }
 
         setWeb3(instance)
     },[])
 
     useEffect(()=>{
-        window.ethereum.on('accountsChanged', function (accounts) {
-            setAdress(accounts[0])
-          });
+        if(window.ethereum){
+            window.ethereum.on('accountsChanged', function (accounts) {
+                setAdress(accounts[0])
+              });
+        }
+        
     },[])
 
     const connect = async()=>{
@@ -111,8 +111,8 @@ const MetaMask = ()=>{
                         
                         } value={amount} />}
                     <br/>
-                    {!address &&<button onClick={connect}>Connect Your MetaMask Wallet</button>}
-                    {address && <button onClick={sendBNB}>Send BNB</button>}
+                    {!address &&<Button onClick={connect}>Connect Your MetaMask Wallet</Button>}
+                    {address && <Button onClick={sendBNB}>Send BNB</Button>}
                 </div>
             </div>
         </>

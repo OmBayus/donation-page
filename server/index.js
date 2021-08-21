@@ -1,12 +1,17 @@
 const express = require("express")
 const cors = require("cors")
 const Iyzipay = require('iyzipay');
+const { v4: uuidv4 } = require('uuid');
+require('dotenv').config()
+
 
 const app = express()
 
+const bills = []
+
 var iyzipay = new Iyzipay({
-    apiKey: "sandbox-GnKqgLrt6n5gTKUVTKzOVi1oEWQIZEK7",
-    secretKey: "sandbox-FwQFLQAUkEJfgAW6KLrWqnGflEgO9QSa",
+    apiKey: process.env.APIKEY,
+    secretKey: process.env.SECRETKEY,
     uri: 'https://sandbox-api.iyzipay.com'
 });
 
@@ -14,15 +19,16 @@ app.use(express.json())
 app.use(cors())
 
 app.post("/pay",(req,res)=>{
+    const billId = uuidv4()
     var request = {
         locale: Iyzipay.LOCALE.TR,
         conversationId: '123456789',
-        price: '1',
-        paidPrice: '1.2',
+        price: req.body.amount,
+        paidPrice: req.body.amount,
         currency: Iyzipay.CURRENCY.TRY,
         basketId: 'B67832',
         paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-        callbackUrl: 'https://www.merchant.com/callback',
+        callbackUrl: ('http://localhost:4000/checkout?bill='+billId),
         enabledInstallments: [2, 3, 6, 9],
         buyer: {
             id: 'BY789',
@@ -66,8 +72,46 @@ app.post("/pay",(req,res)=>{
     };
     
     iyzipay.checkoutFormInitialize.create(request, function (err, result) {
+        bills.push({
+            billId:billId,
+            token:result.token
+        })
         res.json({paymentPageUrl:result.paymentPageUrl})
     });
+})
+
+
+app.post("/checkout",(req,res)=>{
+    if(req.query.bill){
+        const bill = bills.find(i=>i.billId === req.query.bill)
+        if(bill){
+            iyzipay.checkoutForm.retrieve({
+                locale: Iyzipay.LOCALE.TR,
+                conversationId: '123456789',
+                token: bill.token
+            }, function (err, result) {
+                if(result.paymentStatus){
+                    res.redirect('http://localhost:3000/creditcard?bill='+req.query.bill);
+                }
+            });
+        }
+    }
+    else if(req.body.bill){
+        const bill = bills.find(i=>i.billId === req.body.bill)
+        if(bill){
+            iyzipay.checkoutForm.retrieve({
+                locale: Iyzipay.LOCALE.TR,
+                conversationId: '123456789',
+                token: bill.token
+            }, function (err, result) {
+                if(result.paymentStatus){
+                    res.json({success:result.paymentStatus});
+                }
+            });
+        }
+    }
+    
+    
 })
 
 
